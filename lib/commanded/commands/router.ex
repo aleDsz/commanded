@@ -468,6 +468,7 @@ defmodule Commanded.Commands.Router do
               | {:error, :consistency_timeout}
               | {:error, reason :: term()}
 
+  # credo:disable-for-next-line
   defmacro __before_compile__(_env) do
     quote generated: true do
       @doc false
