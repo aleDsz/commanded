@@ -3,6 +3,8 @@ defmodule Commanded.Aggregates.Aggregate do
   use GenServer, restart: :temporary
   use Commanded.Registration
 
+  alias Commanded.Aggregates.{AggregateStateBuilder, Multi}
+
   telemetry_event(%{
     event: [:commanded, :aggregate, :execute, :start],
     description: "Emitted when an aggregate starts executing a command",
@@ -216,7 +218,7 @@ defmodule Commanded.Aggregates.Aggregate do
               aggregate_uuid: aggregate_uuid,
               snapshotting: Snapshotting.new(application, aggregate_uuid, snapshot_options)
             }
-            |> Commanded.Aggregates.AggregateStateBuilder.populate()
+            |> AggregateStateBuilder.populate()
             |> Map.fetch!(:aggregate_state)
           end)
 

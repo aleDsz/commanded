@@ -21,6 +21,8 @@ defmodule Mix.Tasks.Commanded.Reset do
 
   use Mix.Task
 
+  alias Commanded.Event.Handler
+
   @shortdoc "Reset an event handler to its start_from"
 
   @switches [
@@ -66,7 +68,7 @@ defmodule Mix.Tasks.Commanded.Reset do
     end
 
     quiet = Keyword.get(opts, :quiet, false)
-    registry_name = Commanded.Event.Handler.name(app, handler_name)
+    registry_name = Handler.name(app, handler_name)
 
     case Commanded.Registration.whereis_name(app, registry_name) do
       :undefined ->

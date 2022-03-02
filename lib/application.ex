@@ -166,9 +166,12 @@ defmodule Commanded.Application do
   @doc false
   defmacro __using__(opts) do
     quote bind_quoted: [opts: opts] do
+      alias Commanded.Aggregates.Aggregate
+      alias Commanded.Application.Supervisor
+
       @behaviour Commanded.Application
 
-      {otp_app, config} = Commanded.Application.Supervisor.compile_config(__MODULE__, opts)
+      {otp_app, config} = Supervisor.compile_config(__MODULE__, opts)
 
       @otp_app otp_app
       @config config
@@ -178,8 +181,7 @@ defmodule Commanded.Application do
         default_dispatch_opts: Keyword.get(opts, :default_dispatch_opts, [])
 
       def config do
-        {:ok, config} =
-          Commanded.Application.Supervisor.runtime_config(__MODULE__, @otp_app, @config, [])
+        {:ok, config} = Supervisor.runtime_config(__MODULE__, @otp_app, @config, [])
 
         config
       end
@@ -195,7 +197,7 @@ defmodule Commanded.Application do
       def start_link(opts \\ []) do
         name = name(opts)
 
-        Commanded.Application.Supervisor.start_link(__MODULE__, @otp_app, @config, name, opts)
+        Supervisor.start_link(__MODULE__, @otp_app, @config, name, opts)
       end
 
       def stop(pid, timeout \\ 5000) do
@@ -203,7 +205,7 @@ defmodule Commanded.Application do
       end
 
       def aggregate_state(aggregate_module, aggregate_uuid, timeout \\ 5000) do
-        Commanded.Aggregates.Aggregate.aggregate_state(
+        Aggregate.aggregate_state(
           __MODULE__,
           aggregate_module,
           aggregate_uuid,
